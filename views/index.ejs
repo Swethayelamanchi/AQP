@@ -1,0 +1,100 @@
+<html>
+<head>
+    <title></title>
+    <script src="/js/modernizr-2.8.3.js"></script>
+    <script src="/js/jquery-3.3.1.js"></script>
+    <script src="/js/bootstrap.js"></script>
+    <script src="/js/codemirror.js"></script>
+    <script src="/js/placeholder.js"></script>
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <link href="/css/codemirror.css" rel="stylesheet" />
+    <link href="/css/bootstrap.css" rel="stylesheet"/>
+    <link href="/css/site.css" rel="stylesheet"/>
+    <link href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet"/>
+</head>
+
+<style>
+    .CodeMirror {
+        border: 1px solid silver;
+        border-radius: 5px;
+    }
+
+    .CodeMirror-empty.CodeMirror-focused {
+        outline: none;
+    }
+
+    .CodeMirror pre.CodeMirror-placeholder {
+        color: #999;
+    }
+    .btn-width{
+        width: 100px;
+    }
+    .verticalLine {
+        border-left: 1px solid silver;
+    }
+    .div-results {
+        display: none;
+        margin-left: -20%;
+        margin-right: -20%
+    }
+</style>
+
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+    </div>
+    <div class="container body-public/css">
+        <h2>AQP : Approximate Query Processing</h2>
+<hr />
+
+<% if( error == 1 ) { %>
+    <div class="alert alert-danger">
+        <strong>Error:&nbsp;</strong> <%= errormessage %>
+    </div>
+<% } %>  
+
+<div class="help-block">
+    Enter SQL query for comparing performance between postgre and hive databases
+    <b style="margin-left:25em">Select Database:</b>
+    <select id="ddlDatabase">
+        <option value="All">All</option>
+        <option value="Postgres">Postgres</option>
+        <option value="Sample">Sample</option>
+      </select>
+</div>
+
+<form><textarea id="editor" name="editor" placeholder="Enter your Query here..."><%= query %></textarea></form>
+<br />
+<div style="text-align:right">
+    <input type="button" id="btnSubmit" value="submit" class="btn btn-default btn-width">
+    <input type="button" id="btnClear" value="clear" class="btn btn-default btn-width">
+</div>
+
+</div>
+    <hr />
+    <!-- <footer class="container body-public/css">
+        <p>&copy; @DateTime.Now.Year</p>
+    </footer> -->
+
+</body>
+</html>
+
+<script>
+    editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
+        lineNumbers: true
+    });
+
+    $(document).ready(function () {
+
+        $('#btnSubmit').click(function () {
+            $('#divResults').css({ 'display': 'block' });
+            window.location.assign("/result?query="+ editor.getValue() + "&database="+$('#ddlDatabase').val());
+        })
+
+        $('#btnClear').click(function () {
+            editor.setValue('');
+            $('#divResults').css({ 'display': 'none' });
+        })
+
+    });
+</script>
+
