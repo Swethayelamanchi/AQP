@@ -46,7 +46,7 @@
 <hr />
 
     <div class="help-block">
-        Enter SQL query for comparing performance between postgre and hive databases
+        Enter SQL query for comparing performance between postgre databases
         <b style="margin-left:25em">Select Database:</b>
         <select id="ddlDatabase">
             <option value="All">All</option>
@@ -54,7 +54,6 @@
             <option value="Sample">Sample</option>
           </select>
     </div>
-
 
 <form><textarea id="editor" name="editor" placeholder="Enter your Query here..."><%= query %></textarea></form>
 <br />
@@ -68,8 +67,8 @@
     <div class="col-lg-6" >
         <div id="divPostgres">
                 <h4><u><i>Postgre Result</i></u></h4>
-                <label><%= planningTime %> </label>
-                <br />
+                <!-- <label><%= planningTime %> </label>
+                <br /> -->
                 <label><%= executionTime %> </label>
                 <br />
                 <label>Result set size: <%= rowsCount %> </label>
@@ -97,8 +96,8 @@
     </div>
     <div class="col-lg-6 verticalLine" id="divSample">
         <h4><u><i>Sample Database Result</i></u></h4>
-        <label><%= samplePlanningTime %> </label>
-        <br />
+        <!-- <label><%= samplePlanningTime %> </label>
+        <br /> -->
         <label><%= sampleExecutionTime %> </label>
         <br />
         <label>Result set size: <%= sampleRowsCount %> </label>

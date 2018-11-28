@@ -24,9 +24,9 @@ app.get('/result', (req, res,next) => {
 
         pool = new Pool({
             user: 'postgres',
-            host: 'localhost',
-            database: 'postgres',
-            password: 'welcome2020',
+            host: '10.70.0.141',
+            database: 'tpch1g',
+            password: 'ysu123',
             port: 5432,
         })
 
@@ -35,18 +35,18 @@ app.get('/result', (req, res,next) => {
 
         samplePool = new Pool({
             user: 'postgres',
-            host: 'localhost',
-            database: 'sample',
-            password: 'welcome2020',
+            host: '10.70.0.141',
+            database: 's_tpch1g',
+            password: 'ysu123',
             port: 5432,
         })
 
         GetSamplePostgreStats(query);
         GetSamplePostgresResult(query);
-
-        timer = 0;
-        while (timer < 60 )
-        {
+        queryerror = false;
+        // timer = 0;
+        // while (timer < 600 )
+        // {
         setTimeout(function(){ 
             if(resultCount == 4)
                 {
@@ -65,16 +65,22 @@ app.get('/result', (req, res,next) => {
                     })
                 }
                 catch (error) {
+                    console.log(error);
                     res.render('index',{'error':1,
                                         'errormessage': queryerror ? "SQL query is not valid. Please check the query." : "Internal error. Please try again.",
                                         'query':query});
                 }
             }
-            }, 1000);
-            if(resultCount == 4)
-            break;
-            timer ++;
-        }
+            else{
+                res.render('index',{'error':1,
+                'errormessage': "Query timeout",
+                'query':query});
+            }
+            }, 60000);
+            // if(resultCount == 4)
+            // break;
+           
+       // }
   });
 
 app.listen(3000, function () {
@@ -87,20 +93,25 @@ function GetPostgreStats(query)
         pool.query('EXPLAIN ANALYZE ' + query , (err, res) => {
             if (!err) 
             {
+                planningTime = '--';
+                executionTime = '--';
                 res.rows.forEach(element => {
     
-                    if(element["QUERY PLAN"].includes('Planning time'))
+                    if(element["QUERY PLAN"].includes('Aggregate'))
                         planningTime = element["QUERY PLAN"];
         
-                    if(element["QUERY PLAN"].includes('Execution time'))
+                    if(element["QUERY PLAN"].includes('Total runtime'))
                         executionTime = element["QUERY PLAN"];
                     });
+                    resultCount ++;
+                    console.log(resultCount)
             }
             else{
                 queryerror = true;
+                resultCount ++;
             }
           })
-          resultCount ++;
+         
 }
 
 function GetPostgresResult(query)
@@ -110,12 +121,15 @@ function GetPostgresResult(query)
                 rowsCount = res.rows.length;
                 tableData= res.rows;
                 pool.end()
+                resultCount ++;
+                console.log(resultCount)
               }
               else{
                   queryerror = true;
+                  resultCount ++;
               }
         })
-        resultCount ++;
+       
 }
 
 
@@ -125,20 +139,28 @@ function GetSamplePostgreStats(query)
     samplePool.query('EXPLAIN ANALYZE ' + query , (err, res) => {
             if (!err) 
             {
+                samplePlanningTime = '--';
+                sampleExecutionTime = '--';
                 res.rows.forEach(element => {
     
-                    if(element["QUERY PLAN"].includes('Planning time'))
+                    if(element["QUERY PLAN"].includes('Aggregate '))
+                    {
                         samplePlanningTime = element["QUERY PLAN"];
+                    }
         
-                    if(element["QUERY PLAN"].includes('Execution time'))
+                    if(element["QUERY PLAN"].includes('Total runtime'))
                         sampleExecutionTime = element["QUERY PLAN"];
                     });
+                    resultCount ++;
+                    console.log(resultCount)
             }
             else{
                 queryerror = true;
+                resultCount ++;
+              
             }
           })
-          resultCount ++;
+         
 }
 
 function GetSamplePostgresResult(query)
@@ -148,10 +170,13 @@ function GetSamplePostgresResult(query)
                 sampleRowsCount = res.rows.length;
                 sampleTableData= res.rows;
                 samplePool.end()
+                resultCount ++;
+                console.log(resultCount)
               }
               else{
                   queryerror = true;
+                  resultCount ++;
               }
         })
-        resultCount ++;
+      
 }
